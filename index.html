@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Video Player</title>
+<style>
+  :root { --bg:#14171c; --panel:#1d222a; --text:#e8ecf1; --accent:#3d8bfd; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:flex; flex-direction:column; align-items:center;
+         justify-content:center; gap:20px; padding:24px; background:var(--bg); color:var(--text);
+         font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .player { width:min(960px,100%); aspect-ratio:16/9; background:#000; border-radius:10px; overflow:hidden; }
+  .player iframe { width:100%; height:100%; border:0; display:block; }
+  .controls { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  button { padding:12px 22px; font-size:16px; font-weight:600; color:var(--text); background:var(--panel);
+           border:1px solid #333b47; border-radius:8px; cursor:pointer; }
+  button:hover { border-color:var(--accent); }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+</style>
+</head>
+<body>
+  <div class="player"><div id="yt"></div></div>
+
+  <div class="controls">
+    <button class="primary" id="play">Play</button>
+    <button id="pause">Pause</button>
+    <button id="full">Fullscreen</button>
+  </div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    let player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('yt', {
+        videoId: 'fFZxYjtfnEc',
+        width: '100%', height: '100%',
+        playerVars: { start: 6056, rel: 0, playsinline: 1 }
+      });
+    }
+    document.getElementById('play').onclick  = () => player && player.playVideo();
+    document.getElementById('pause').onclick = () => player && player.pauseVideo();
+    document.getElementById('full').onclick  = () => {
+      const f = player && player.getIframe();
+      if (!f) return;
+      (f.requestFullscreen || f.webkitRequestFullscreen || f.msRequestFullscreen).call(f);
+    };
+  </script>
+</body>
+</html>
