@@ -1,2 +1,2 @@
-# dhyan
-dhyan ( Meditation )
+# Dhyan
+Dhyan ( Meditation )
