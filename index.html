@@ -73,7 +73,13 @@
   svg[hidden] { display:none; }
   .volume { display:flex; align-items:center; gap:8px; }
   input[type=range] { width:110px; accent-color:var(--accent); cursor:pointer; }
-  @media (max-width:480px) { input[type=range] { width:80px; } }
+  @media (max-width:480px) {
+    input[type=range] { width:60px; }
+    button { padding:9px; }
+    button svg { width:18px; height:18px; }
+    .controls { gap:6px !important; padding:6px 8px !important; }
+    .volume { gap:4px; }
+  }
   button:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
 
   /* On narrow screens the playlist drops below the player */
@@ -95,9 +101,15 @@
     </aside>
 
     <div class="controls">
+    <button id="prev" aria-label="Previous song">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+    </button>
     <button class="primary" id="toggle" aria-label="Play">
       <svg id="icoPlay" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14z"/></svg>
       <svg id="icoPause" viewBox="0 0 24 24" aria-hidden="true" hidden><rect x="6" y="4.5" width="4.5" height="15" rx="1.2"/><rect x="13.5" y="4.5" width="4.5" height="15" rx="1.2"/></svg>
+    </button>
+    <button id="next" aria-label="Next song">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
     </button>
     <div class="volume">
       <button id="mute" class="icon-btn" aria-label="Mute">
@@ -279,6 +291,10 @@
       if (!player || !player.getPlayerState) return;
       isPlaying() ? player.pauseVideo() : player.playVideo();
     };
+
+    // Previous / next song in the playlist
+    document.getElementById('prev').onclick = () => player && player.previousVideo && player.previousVideo();
+    document.getElementById('next').onclick = () => player && player.nextVideo && player.nextVideo();
 
     // Volume control (mute button + slider)
     const volEl = document.getElementById('vol');
