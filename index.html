@@ -14,7 +14,7 @@
   
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Video Player</title>
+<title>Meditate (Dhyan)</title>
 <style>
   :root { --bg:#14171c; --panel:#1d222a; --text:#e8ecf1; --accent:#3d8bfd; }
   * { box-sizing: border-box; }
@@ -25,10 +25,19 @@
 
   /* Starfield sits behind everything */
   #stars { position:fixed; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
-  .player, .controls { position:relative; z-index:1; }
+  .layout, .controls { position:relative; z-index:1; }
 
-  .player { width:min(960px,100%); aspect-ratio:16/9; background:#000; border-radius:10px; overflow:hidden; }
+  /* Main player (80%) + playlist (20%) side by side */
+  .layout { width:min(1500px,100%); display:grid; grid-template-columns:calc(80% - 8px) calc(20% - 8px);
+            gap:16px; align-items:stretch; }
+  .player { width:100%; aspect-ratio:16/9; background:#000; border-radius:10px; overflow:hidden; }
   .player iframe { width:100%; height:100%; border:0; display:block; }
+
+  /* Playlist panel matches the player's height */
+  .playlist { position:relative; min-height:0; background:#000; border-radius:10px; overflow:hidden;
+              border:1px solid rgba(255,255,255,.1); }
+  .playlist iframe { position:absolute; inset:0; width:100%; height:100%; border:0; display:block; }
+
   .controls { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; padding:10px 14px;
               border-radius:999px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);
               backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
@@ -46,13 +55,28 @@
                    box-shadow:0 0 20px rgba(91,110,255,.55); }
   button.primary:hover { box-shadow:0 0 28px rgba(122,92,255,.8); background:linear-gradient(135deg,#5599ff,#8d72ff); }
   button:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+
+  /* On narrow screens the playlist drops below the player */
+  @media (max-width:800px) {
+    .layout { grid-template-columns:1fr; }
+    .playlist { min-height:320px; }
+  }
   @media (max-width:480px) { button { padding:12px 16px; } button span { display:none; } }
 </style>
 </head>
 <body>
   <canvas id="stars" aria-hidden="true"></canvas>
 
-  <div class="player"><div id="yt"></div></div>
+  <div class="layout">
+    <div class="player"><div id="yt"></div></div>
+    <aside class="playlist" aria-label="Playlist">
+      <iframe id="playlist"
+              title="Playlist"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+              allowfullscreen
+              loading="lazy"></iframe>
+    </aside>
+  </div>
 
   <div class="controls">
     <button class="primary" id="play" aria-label="Play">
@@ -128,6 +152,13 @@
       resize();
       requestAnimationFrame(frame);
     })();
+  </script>
+
+  <script>
+    // Playlist panel (right side, 20% width)
+    const PLAYLIST_ID = 'PLVNdeZSBrci4'; // <- replace with the full playlist ID if this one is cut short
+    document.getElementById('playlist').src =
+      'https://www.youtube.com/embed/videoseries?list=' + encodeURIComponent(PLAYLIST_ID) + '&rel=0&playsinline=1';
   </script>
 
   <script src="https://www.youtube.com/iframe_api"></script>
